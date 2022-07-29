@@ -1,0 +1,83 @@
+Dash light && Warning lights:
+ID: 0x128
+0 160 1 192 0 0 4 0
+Gdy włączone normalne światła, na pierwszym miejscu wartość 0 ---> 128
+Gdy włączone światła awaryjne, na pierwszym miejscu wartość 0 --> 6
+
+*wystarczy wpisywać tylko wartość pierwszego bajtu (najstarszego), czyli 128 albo 6, reszta może być zerami.
+
+ID: 0x0B6
+IS_DYN_CMM_208 + IS_DYN_ABR_38D
+(engine_speed)    (car_speed)
+
+Ramka: 	   255 255	     255 255	   0 0 0 40
+       (engine_speed)      (car_speed)
+*wystarczy wysyłać tylko rpm i speed, reszta może być '0'.
+*timing ramek jakoś bez znaczenia - sprawdzane 10ms - 100ms
+
+FUEL_GAUGE:
+ID 0x161
+0 0 60 255 0 0 255
+
+---------------------------------------------------------23.07.2022--------------------------------------------------------------
+Kontrolki na desce rozdzielczej:
+first_byte - każdy bit z wyjątkiem najmłodszego odpowiada za którąś kontrolkę od świateł (zaświecają się na obrotomierzu).
+	     Kontrolka świeci się gdy jest ustawiona na '1'.
+
+second_byte - odpowiada za biegi wyświetlane na środkowym wyświetlaczu.
+	     0000_0000 - parkMod
+	     0000_0001 - migające P
+	     0010_0000 - N
+	     1001_0000 - 1
+	     1000_0000 - 2
+	     0111_0000 - 3
+	     0110_0000 - 4
+	     0101_0000 - 5
+	     0100_0000 - 6
+	     0011_0000 - D
+
+third_byte - pozostałe symbole na wyświetlaczu
+	     0000_0001 - wyłącza P
+	     0000_0010 - AUTO w miejsce P
+	     0010_0000 - małe 's' obok P
+	     1110_0000 - śnieżynka obok P
+
+fourth_byte - pozostałe symbole na wyświetlaczu
+	     0001_0000 - jakiś symbol z poduszką powietrzną na liczniku
+	     1000_0000 - włącza SERVICE na obrotomierzu
+	     
+fifth_byte - 
+	     0100_0000 - włącza na obrotomierzu "otwarte drzwi'
+
+sixth_byte
+	     0000_0001 - włącza "niezapiete pasy"
+	     1000_0000 - zapala "rezerwa paliwa"
+
+seventh_byte
+	     0001_0000 - włącza "niezapiete pasy"
+	     0011_0000 - migające "niezapiete pasy"
+
+eigth_byte
+	     0000_0000 - check engine tylko z wykrzyknikiem
+
+
+Warning Lights:
+ID: 0x168
+first_byte: niski poziom oleju
+second_byte: checkengine z wykrzyknikiem, wykrzyknik obok SERVICE
+thirth_byte: akumulator
+fourth_byte: check_engine, abs, poślizg, 
+fifth_byte: poduszka powietrzna, ECO (zielony napis) 
+sixth_byte: zgaszenie kierownicy z wykrzyknikiem na obrotomierzu
+
+
+Fuel gauge:
+ID: 0x161
+fourth_byte: wskazówka od paliwa, cały zakres wskazówki uzyskujemy wartościami 0-120
+
+
+Temperature gauge:
+ID: 0x0F6
+thirth_byte: przebieg samochodu
+fourth_byte: przebieg samochodu, precyzyjniejsze
+fifth_byte: przebieg samochodu, pojedyncze mile
