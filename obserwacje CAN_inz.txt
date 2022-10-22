@@ -19,8 +19,13 @@ FUEL_GAUGE:
 ID 0x161
 0 0 60 255 0 0 255
 
+Wystarczy modyfikować tylko 4bit:
+0 0 0 X 0 0 0 0
+Zakres zmian wartości X to 0-100
+
 ---------------------------------------------------------23.07.2022--------------------------------------------------------------
 Kontrolki na desce rozdzielczej:
+ID: 0x128
 first_byte - każdy bit z wyjątkiem najmłodszego odpowiada za którąś kontrolkę od świateł (zaświecają się na obrotomierzu).
 	     Kontrolka świeci się gdy jest ustawiona na '1'.
 
@@ -73,7 +78,7 @@ sixth_byte: zgaszenie kierownicy z wykrzyknikiem na obrotomierzu
 
 Fuel gauge:
 ID: 0x161
-fourth_byte: wskazówka od paliwa, cały zakres wskazówki uzyskujemy wartościami 0-120
+fourth_byte: wskazówka od paliwa, cały zakres wskazówki uzyskujemy wartościami 0-100
 
 
 Temperature gauge:
