@@ -32,13 +32,13 @@ first_byte - każdy bit z wyjątkiem najmłodszego odpowiada za którąś kontro
 second_byte - odpowiada za biegi wyświetlane na środkowym wyświetlaczu.
 	     0000_0000 - parkMod
 	     0000_0001 - migające P
-	     0010_0000 - N
-	     1001_0000 - 1
-	     1000_0000 - 2
-	     0111_0000 - 3
-	     0110_0000 - 4
-	     0101_0000 - 5
-	     0100_0000 - 6
+	     0010_0000 - N	16
+	     1001_0000 - 1	144
+	     1000_0000 - 2	128
+	     0111_0000 - 3	112
+	     0110_0000 - 4	96
+	     0101_0000 - 5	80
+	     0100_0000 - 6	64
 	     0011_0000 - D
 
 third_byte - pozostałe symbole na wyświetlaczu
@@ -52,6 +52,7 @@ fourth_byte - pozostałe symbole na wyświetlaczu
 	     1000_0000 - włącza SERVICE na obrotomierzu
 	     
 fifth_byte - 
+
 	     0100_0000 - włącza na obrotomierzu "otwarte drzwi'
 
 sixth_byte
@@ -69,10 +70,20 @@ eigth_byte
 Warning Lights:
 ID: 0x168
 first_byte: niski poziom oleju
+	     1000-0000 - kontrolka "kropka" temperatury silnika, świeci się na czerwono
 second_byte: checkengine z wykrzyknikiem, wykrzyknik obok SERVICE
+	     1000-0000 - kontrolka NISKIEGO POZIOMU CIŚNIENIA W OPONACH na obrotomierzu
+	     0010-0000 - migający CHECK_ENGINE
+	     0001-0000 - check_engine z wykrzyknikiem
 thirth_byte: akumulator
+	     0000-0001 - kontrolka NIEWŁAŚCIWY POZIOM NAŁADOWANIA AKUMULATORA
 fourth_byte: check_engine, abs, poślizg, 
+	     0000_0001 - wyłącza CHECK_ENGINE
+	     0000_1000 - włącza kontrolkę ZERWANIE_PRZYCZEPNOŚCI
 fifth_byte: poduszka powietrzna, ECO (zielony napis) 
+	     0000-0001 - włącza kontrolkę ECO
+	     0001-0000 - włącza kontrolkę poduszki
+	     
 sixth_byte: zgaszenie kierownicy z wykrzyknikiem na obrotomierzu
 
 

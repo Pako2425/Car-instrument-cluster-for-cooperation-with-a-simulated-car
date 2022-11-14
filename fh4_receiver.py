@@ -1,20 +1,129 @@
 import socket
+import can
+import time
+from timeit import default_timer as timer
+import threading
 import struct
 import pygame
 
-USER_IP = "192.168.1.33"
-UDP_PORT = 4685
 
-sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-sock.bind((USER_IP, UDP_PORT))
+class Receiver:
+    def __init__(self, RECEIVER_IP, UDP_PORT):
+        self.RECEIVER_IP = RECEIVER_IP
+        self.UDP_PORT = UDP_PORT
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.sock.bind((self.RECEIVER_IP, self.UDP_PORT))
+        self.bus = can.interface.Bus(bustype='slcan', channel='COM3', bitrate=125000)
 
-engineRpm = 0.0         #[17:21]
-speed = 0.0             #[250:254]
-gear = 0                #[314]
-handBrake = 0           #[313]
-distanceTraveled = 0.0  #[290:294]
-fuel = 0.0              #[286:290]
+        self.data_speedAndRpm = [0,0,0,0,0,0,0,0]
+        self.data_lightsAndGear = [0,0,0,0,0,0,0,0]
+        self.data_warningLights = [0,0,0,0,0,0,0,0]
 
+
+    def receive(self):
+        recvData = self.sock.recvfrom(324)
+        self.telemetry = recvData[0]
+
+    def processingTelemetryData(self):
+        self.engineRpm = struct.unpack('f', self.telemetry[16:20])[0]
+        self.speed = struct.unpack('f', self.telemetry[256:260])[0]
+        self.fuel = struct.unpack('f', self.telemetry[288:292])[0]
+        self.distanceTraveled = struct.unpack('f', self.telemetry[292:296])[0]
+        self.flTireGrip = struct.unpack('f', self.telemetry[84:88])[0]
+        self.frTireGrip = struct.unpack('f', self.telemetry[88:92])[0]
+        self.blTireGrip = struct.unpack('f', self.telemetry[92:96])[0]
+        self.brTireGrip = struct.unpack('f', self.telemetry[96:100])[0]
+        self.accelerationX = struct.unpack('f', self.telemetry[20:24])[0]
+        self.accelerationZ = struct.unpack('f', self.telemetry[28:32])[0]
+        self.handBrake = struct.unpack('H', self.telemetry[318:319] + b'\x00')[0]
+        self.gear = struct.unpack('H', self.telemetry[319:320] + b'\x00')[0]
+
+    def processingDataForCluster(self):
+        #speed = int(self.speed * 1072.404)
+        speed = int(self.speed * 357.142)
+        rpm = int(self.engineRpm * 8.0)
+        self.data_speedAndRpm = [(rpm >> 8 & 0xFF), (rpm & 0xFF), (speed >> 8 & 0xFF), (speed & 0xFF), 0, 0, 0, 0]
+        if self.gear == 0:
+            self.data_lightsAndGear[1] = 16
+        elif self.gear == 1:
+            self.data_lightsAndGear[1] = 144
+
+        elif self.gear == 2:
+            self.data_lightsAndGear[1] = 128
+
+        elif self.gear == 3:
+            self.data_lightsAndGear[1] = 112
+
+        elif self.gear == 4:
+            self.data_lightsAndGear[1] = 96
+
+        elif self.gear == 5:
+            self.data_lightsAndGear[1] = 80
+
+        else:
+            self.data_lightsAndGear[1] = 16
+
+    def send(self):
+        msg_speedAndRpm = can.Message(arbitration_id=0x0B6, data=self.data_speedAndRpm, is_extended_id=False, dlc=8)
+        msg_lightsAndGear = can.Message(arbitration_id=0x128, data=self.data_lightsAndGear, is_extended_id=False, dlc=8)
+        msg_warning_lights = can.Message(arbitration_id=0x168, data=[0, 0, 0, 1, 0, 0, 0, 0], is_extended_id=False, dlc=8)
+        try:
+            self.bus.send(msg_speedAndRpm)
+            self.bus.send(msg_lightsAndGear)
+            self.bus.send(msg_warning_lights)
+            print("Message sent")
+        except can.CanError:
+            print("Message NOT sent")
+
+Receiver = Receiver("192.168.0.136", 5555)
+
+while True:
+    start = timer()
+    Receiver.receive()
+    Receiver.processingTelemetryData()
+    Receiver.processingDataForCluster()
+    Receiver.send()
+    end = timer()
+    print(end - start)
+
+
+
+
+#start = timer()
+#speed_and_rpm
+#speed = 10.0             #m/s
+#s = int(speed*1072.404)  #m/s to km/h and speed to cluster resolution
+#rpm = 4000.0
+#r = int(rpm*9.362)
+#data_speedAndRpm = [(s>>8 & 0xFF), (s & 0xFF), (r>>8 & 0xFF), (r & 0xFF), 0, 0, 0, 0]
+"""
+gear = 1
+light_and_gear_data = [0,0,0,0,0,0,0,0]
+if gear == 0:
+    light_and_gear_data[1] = 16
+elif gear == 1:
+    light_and_gear_data[1] = 144
+
+elif gear == 2:
+    light_and_gear_data[1] = 128
+
+elif gear == 3:
+    light_and_gear_data[1] = 112
+
+elif gear == 4:
+    light_and_gear_data[1] = 96
+
+elif gear == 5:
+    light_and_gear_data[1] = 80
+
+else:
+    light_and_gear_data[1] = 16
+
+end = timer()
+print(end - start)
+"""
+
+"""
 pygame.init()
 window_size = (400,400)
 window = pygame.display.set_mode(window_size)
@@ -54,3 +163,4 @@ while(True):
     window.blit(font.render(f"handBrake: {handBrake}", False, green), (20, 270))
     window.blit(font.render(f"gear: {gear}", False, green), (20, 295))
     pygame.display.flip()
+"""
