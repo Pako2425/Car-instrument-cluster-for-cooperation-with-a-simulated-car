@@ -28,72 +28,117 @@ Kontrolki na desce rozdzielczej:
 ID: 0x128
 first_byte - każdy bit z wyjątkiem najmłodszego odpowiada za którąś kontrolkę od świateł (zaświecają się na obrotomierzu).
 	     Kontrolka świeci się gdy jest ustawiona na '1'.
+	0000_0000 - Nic
+	0000_0001 - Nic
+	0000_0010 - lewy kierunkowskaz
+	0000_0100 - prawy kierunkowskaz
+	0000_1000 - swiatła przeciwmgielne tylne
+	0001_0000 - światła przeciwmgielne przednie
+	0010_0000 - światła drogowe (długie)
+	0100_0000 - światła mijania
+	1000_0000 - światła postojowe
 
-second_byte - odpowiada za biegi wyświetlane na środkowym wyświetlaczu.
+second_byte - odpowiada za biegi wyświetlane na środkowym wyświetlaczu:
 	     0000_0000 - parkMod
-	     0000_0001 - migające P
-	     0010_0000 - N	16
+	     0000_0001 - migające wartości na wyświetlaczu	     
+	     0000_0010 - NIC
+	     0000_0100 - NIC
+	     0000_1000 - NIC
+	     0001_0000 - R	16
+	     0010_0000 - N	32
+	     0011_0000 - D
+	     0100_0000 - 6	64
+	     0101_0000 - 5	80
 	     1001_0000 - 1	144
 	     1000_0000 - 2	128
 	     0111_0000 - 3	112
 	     0110_0000 - 4	96
-	     0101_0000 - 5	80
-	     0100_0000 - 6	64
-	     0011_0000 - D
+
 
 third_byte - pozostałe symbole na wyświetlaczu
-	     0000_0001 - wyłącza P
-	     0000_0010 - AUTO w miejsce P
-	     0010_0000 - małe 's' obok P
-	     1110_0000 - śnieżynka obok P
+	     0000_0001 - wyłącza wyświetlanie biegów na wyświetlaczu cyfrowym
+	     0000_0010 - napis AUTO pod biegamie
+	     0000_0100 - Nic
+	     0000_1000 - Nic
+	     0001_0000 - Nic
+	     0010_0000 - małe 's' obok biegów
+	     0100_0000 - Nic
+	     1000_0000 - Nic
+	     1110_0000 - śnieżynka obok biegów
 
 fourth_byte - pozostałe symbole na wyświetlaczu
-	     0001_0000 - jakiś symbol z poduszką powietrzną na liczniku
+	     0000_0100 - kontrolka "naciśnij na pedał hamulca aby uruchomić silnik" na ekranie cyfrowm
+	     0000_1000 - mrugająca kontrolka "naciśnij na pedał hamulca aby uruchomić silnik"
+	     0001_0000 - włącza "przednia poduszka pasażera została aktywowana"
+	     0010_0000 - Nic	     
+	     0100_0000 - Nic 
 	     1000_0000 - włącza SERVICE na obrotomierzu
 	     
 fifth_byte - 
 
-	     0100_0000 - włącza na obrotomierzu "otwarte drzwi'
+	     0100_0000 - włącza na obrotomierzu kontrolkę "otwarte drzwi"
 
 sixth_byte
 	     0000_0001 - włącza "niezapiete pasy"
-	     1000_0000 - zapala "rezerwa paliwa"
+	     0000_0010 - migający napis "UREA" nad poziomem paliwa
+	     0000_0100 - napisa "UREA" na poziomem paliwa
+	     0000_1001 - migające "niezapiete pasy"
+	     0001_0000 - "niezapięte pasy"
+	     0001_1000 - migające "niezapięte pasy"
+	     0010_0000 - Nic
+	     0100_0000 - "niezapięte pasy"
+	     1000_0000 - zapala kropke "rezerwa paliwa"
 
 seventh_byte
 	     0001_0000 - włącza "niezapiete pasy"
 	     0011_0000 - migające "niezapiete pasy"
 
 eigth_byte
-	     0000_0000 - check engine tylko z wykrzyknikiem
-
-
+	     0001_0000 - "wciśnij pedał sprzęgła aby odpalić" na wyświetlaczu cyfrowym
+	     0010_0000 - to samo, tylko miga
+	     0100_0000 - CHECK ENGINE z wykrzyknikiem
+	     1000_0000 - CHECK ENGINE z wykrzyknikiem, dodatkowo na czerwono
+--------------------------------------------------------------------------------
 Warning Lights:
 ID: 0x168
 first_byte: niski poziom oleju
+	     0000_1000 - "niskie ciśnienie oleju"
 	     1000-0000 - kontrolka "kropka" temperatury silnika, świeci się na czerwono
+
 second_byte: checkengine z wykrzyknikiem, wykrzyknik obok SERVICE
+	     0000_1000 - "automatyczne wycieranie szyb wycieraczkami" na wyswietlaczu cyfrowym
+             0001-0000 - check_engine z wykrzyknikiem	     
 	     1000-0000 - kontrolka NISKIEGO POZIOMU CIŚNIENIA W OPONACH na obrotomierzu
-	     0010-0000 - migający CHECK_ENGINE
-	     0001-0000 - check_engine z wykrzyknikiem
+	     
 thirth_byte: akumulator
 	     0000-0001 - kontrolka NIEWŁAŚCIWY POZIOM NAŁADOWANIA AKUMULATORA
+	     0000-0010 - kontrolka NIEWŁAŚCIWY POZIOM NAŁADOWANIA AKUMULATORA
+
 fourth_byte: check_engine, abs, poślizg, 
 	     0000_0001 - wyłącza CHECK_ENGINE
-	     0000_1000 - włącza kontrolkę ZERWANIE_PRZYCZEPNOŚCI
+	     0000_1000 - migająca śnieżka na wyświetlaczu cyfrowym
+	     0001_0000 - włącza kontrolkę "włączony system przeciwpoślizgowy ESP"
+	     0010_0000 - włącza kontrolke "awaria układu bezpieczeństwa aktywnego ABS"
+
 fifth_byte: poduszka powietrzna, ECO (zielony napis) 
 	     0000-0001 - włącza kontrolkę ECO
-	     0001-0000 - włącza kontrolkę poduszki
-	     
+	     0001-0000 - włącza kontrolkę poduszki "awaria systemu SRS"
+	     0100_0000 - migająca kontrolka świateł drogowych
+	     1000_0000 - migająca kontrolka rezerwy paliwa na wyświetlaczu cyfrowym	     
+
 sixth_byte: zgaszenie kierownicy z wykrzyknikiem na obrotomierzu
-
-
+	0010_0100 - zgaszenie kontrolki kierownicy z wykrzyknikiem "awaria układu wspomagania kierowniczego"
+-----------------------------------------------------------------------------------------------
 Fuel gauge:
 ID: 0x161
 fourth_byte: wskazówka od paliwa, cały zakres wskazówki uzyskujemy wartościami 0-100
-
-
+-----------------------------------------------------------------------------------
 Temperature gauge:
 ID: 0x0F6
+first_byte:	0000_1000 - aktywny cluster, trzeba wysyłać
 thirth_byte: przebieg samochodu
 fourth_byte: przebieg samochodu, precyzyjniejsze
 fifth_byte: przebieg samochodu, pojedyncze mile
+-----------------------------------------------------------------------------
+W stanie spoczynku świeci się:
+-ręczny, STOP
