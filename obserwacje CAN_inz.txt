@@ -28,7 +28,7 @@ Kontrolki na desce rozdzielczej:
 ID: 0x128
 first_byte - każdy bit z wyjątkiem najmłodszego odpowiada za którąś kontrolkę od świateł (zaświecają się na obrotomierzu).
 	     Kontrolka świeci się gdy jest ustawiona na '1'.
-	0000_0000 - Nic
+	0000_0000 - Parking Mode na wyświetlaczu
 	0000_0001 - Nic
 	0000_0010 - lewy kierunkowskaz
 	0000_0100 - prawy kierunkowskaz
@@ -41,9 +41,6 @@ first_byte - każdy bit z wyjątkiem najmłodszego odpowiada za którąś kontro
 second_byte - odpowiada za biegi wyświetlane na środkowym wyświetlaczu:
 	     0000_0000 - parkMod
 	     0000_0001 - migające wartości na wyświetlaczu	     
-	     0000_0010 - NIC
-	     0000_0100 - NIC
-	     0000_1000 - NIC
 	     0001_0000 - R	16
 	     0010_0000 - N	32
 	     0011_0000 - D
@@ -58,25 +55,20 @@ second_byte - odpowiada za biegi wyświetlane na środkowym wyświetlaczu:
 third_byte - pozostałe symbole na wyświetlaczu
 	     0000_0001 - wyłącza wyświetlanie biegów na wyświetlaczu cyfrowym
 	     0000_0010 - napis AUTO pod biegamie
-	     0000_0100 - Nic
-	     0000_1000 - Nic
-	     0001_0000 - Nic
 	     0010_0000 - małe 's' obok biegów
-	     0100_0000 - Nic
-	     1000_0000 - Nic
 	     1110_0000 - śnieżynka obok biegów
 
 fourth_byte - pozostałe symbole na wyświetlaczu
 	     0000_0100 - kontrolka "naciśnij na pedał hamulca aby uruchomić silnik" na ekranie cyfrowm
 	     0000_1000 - mrugająca kontrolka "naciśnij na pedał hamulca aby uruchomić silnik"
 	     0001_0000 - włącza "przednia poduszka pasażera została aktywowana"
-	     0010_0000 - Nic	     
-	     0100_0000 - Nic 
 	     1000_0000 - włącza SERVICE na obrotomierzu
 	     
 fifth_byte - 
-
+	     0000_0010 - migająca kontrolka "system przeciwpoślizgowy ESP"
+	     0000_0100 - niemigająca kontrolka "system przeciwpoślizgowy ESP"
 	     0100_0000 - włącza na obrotomierzu kontrolkę "otwarte drzwi"
+	     
 
 sixth_byte
 	     0000_0001 - włącza "niezapiete pasy"
@@ -85,7 +77,6 @@ sixth_byte
 	     0000_1001 - migające "niezapiete pasy"
 	     0001_0000 - "niezapięte pasy"
 	     0001_1000 - migające "niezapięte pasy"
-	     0010_0000 - Nic
 	     0100_0000 - "niezapięte pasy"
 	     1000_0000 - zapala kropke "rezerwa paliwa"
 
@@ -122,12 +113,11 @@ fourth_byte: check_engine, abs, poślizg,
 
 fifth_byte: poduszka powietrzna, ECO (zielony napis) 
 	     0000-0001 - włącza kontrolkę ECO
-	     0001-0000 - włącza kontrolkę poduszki "awaria systemu SRS"
-	     0100_0000 - migająca kontrolka świateł drogowych
+	     0000-0010 - włącza migającą kontrolkę ECO
+	     0000_0100 - kontrolka kierownicy z wykrzyknikiem "awaria układu wspomagania kierowniczego"	
+	     0010-0000 - włącza kontrolkę poduszki "awaria systemu SRS"
+	     0100_0000 - migająca kontrolka świateł mijania
 	     1000_0000 - migająca kontrolka rezerwy paliwa na wyświetlaczu cyfrowym	     
-
-sixth_byte: zgaszenie kierownicy z wykrzyknikiem na obrotomierzu
-	0010_0100 - zgaszenie kontrolki kierownicy z wykrzyknikiem "awaria układu wspomagania kierowniczego"
 -----------------------------------------------------------------------------------------------
 Fuel gauge:
 ID: 0x161
@@ -142,3 +132,14 @@ fifth_byte: przebieg samochodu, pojedyncze mile
 -----------------------------------------------------------------------------
 W stanie spoczynku świeci się:
 -ręczny, STOP
+-----------------------------------------------------------------------------
+Wysyłanie ramki 0x0F6 z wartością MSB=8 wprowadza cluster w stan gotowości
+Wysyłanie ramki 0x168 bez względu na jej zawartość gasi kontrolki awari
+Wysyłanie ramki 0x128 bez względu na jej zawartpść gasi napis SERVICE
+
+Układ ramek aby wszystko działało poprawnie:
+temperatureGauge id=0x0F6
+warning_lights   id=0x168
+fuelGauge	 id=0x161
+lightsAndGear    id=0x128
+speedAndRpm      id=0x0B6

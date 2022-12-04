@@ -26,8 +26,8 @@ handbreak = 0
     #    print("Message NOT sent")
     #
     #time.sleep(1.0)
-warning_lights = [8, 0, 0, 0, 0, 0, 0, 0]
-i = 7
+warning_lights = [0, 0, 0, 0, 0, 0, 0, 0]
+i = 0
 while True:
     for event in pygame.event.get():
         if event.type == pygame.KEYDOWN:
@@ -38,13 +38,20 @@ while True:
     print(bin(warning_lights[i]))
 
 
-    msg_temperatureGauge = can.Message(arbitration_id=0x0F6, data=warning_lights, is_extended_id=False, dlc=8)
+    msg_temperatureGauge = can.Message(arbitration_id=0x0F6, data=[8,0,0,0,0,0,0,0], is_extended_id=False, dlc=8)
+    msg_warning_lights = can.Message(arbitration_id=0x168, data=[0,0,0,1,0,0,0,0], is_extended_id=False, dlc=8)
+    msg_light_and_gear = can.Message(arbitration_id=0x128, data=[0,0,0,0,0,0,0,0], is_extended_id=False, dlc=8)
+    msg_speed_and_rpm = can.Message(arbitration_id=0x0B6, data=warning_lights, is_extended_id=False, dlc=8)
+    msg_fuel = can.Message(arbitration_id=0x161, data=[0,0,60,98,0,0,255,0], is_extended_id=False, dlc=8)
 
     try:
         #bus.send(speed_and_rpm)
         bus.send(msg_temperatureGauge)
-        #bus.send(msg_warning_lights)
+        bus.send(msg_warning_lights)
+        bus.send(msg_fuel)
+        bus.send(msg_light_and_gear)
+        bus.send(msg_speed_and_rpm)
         print("Message sent")
     except can.CanError:
         print("Message not sent, ERROR")
-    time.sleep(0.05)
+    time.sleep(0.0)
